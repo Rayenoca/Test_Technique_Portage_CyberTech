@@ -13,9 +13,8 @@ import com.portagecybertech.urlshortener.url_shortener.UrlShortenerApplication;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(classes = UrlShortenerApplication.class)
 @AutoConfigureMockMvc
@@ -53,6 +52,70 @@ class UrlControllerTest {
                                 .content(objectMapper.writeValueAsString(body))
                 )
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shorten_returns400_whenEmptyUrl() throws Exception {
+        Map<String, String> body = new HashMap<>();
+        body.put("originalUrl", "");
+
+        mockMvc.perform(
+                        post("/api/shorten")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(body))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shorten_returns400_whenNullUrl() throws Exception {
+        Map<String, String> body = new HashMap<>();
+        body.put("originalUrl", null);
+
+        mockMvc.perform(
+                        post("/api/shorten")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(body))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void expand_returns404_whenShortCodeNotFound() throws Exception {
+        mockMvc.perform(get("/api/expand/nonexistent"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void expand_returnsOriginalUrl_whenValidShortCode() throws Exception {
+        // D'abord créer une URL courte
+        Map<String, String> body = new HashMap<>();
+        body.put("originalUrl", "https://www.example.com");
+        
+        String response = mockMvc.perform(
+                        post("/api/shorten")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(body))
+                )
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        // Extraire le code court de la réponse
+        String shortUrl = objectMapper.readTree(response).get("shortUrl").asText();
+        String shortCode = shortUrl.substring(shortUrl.lastIndexOf("/") + 1);
+
+        // Tester l'expansion
+        mockMvc.perform(get("/api/expand/" + shortCode))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.originalUrl").value("https://www.example.com"));
+    }
+
+    @Test
+    void expand_handlesSpecialCharactersInShortCode() throws Exception {
+        mockMvc.perform(get("/api/expand/test%20code"))
+                .andExpect(status().isNotFound());
     }
 }
 

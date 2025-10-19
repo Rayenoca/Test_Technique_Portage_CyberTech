@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>URL Shortener - Raccourcisseur d'URL</title>
+    <meta name="description" content="Raccourcissez vos URLs longues en quelques clics. Service gratuit et sécurisé.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔗</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <!-- En-tête -->
+            <div class="header">
+                <h1>🔗 URL Shortener</h1>
+                <p>Raccourcissez vos URLs longues en quelques clics. Service gratuit et sécurisé.</p>
+            </div>
+
+            <!-- Section 1: Raccourcir une URL -->
+            <section class="section">
+                <h2>
+                    <span class="section-icon">1</span>
+                    Raccourcir une URL
+                </h2>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input 
+                            id="originalUrl" 
+                            type="text" 
+                            placeholder="https://exemple.com/page-avec-un-nom-tres-long" 
+                            autocomplete="url"
+                            aria-label="URL à raccourcir"
+                        >
+                    </div>
+                    <button id="shortenBtn" class="btn btn-primary" type="button">
+                        Raccourcir
+                    </button>
+                </div>
+                <p class="hint">Collez votre URL longue et obtenez un lien court instantanément.</p>
+                <div id="shortenOk" class="result success"></div>
+                <div id="shortenErr" class="result error"></div>
+            </section>
+
+            <!-- Section 2: Récupérer une URL -->
+            <section class="section">
+                <h2>
+                    <span class="section-icon">2</span>
+                    Récupérer une URL complète
+                </h2>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input 
+                            id="shortCode" 
+                            type="text" 
+                            placeholder="abc123 ou http://localhost:8080/abc123" 
+                            autocomplete="off"
+                            aria-label="Code court ou URL courte"
+                        >
+                    </div>
+                    <button id="expandBtn" class="btn btn-primary" type="button">
+                        Récupérer
+                    </button>
+                </div>
+                <p class="hint">Saisissez un code court ou collez une URL courte pour retrouver l'URL originale.</p>
+                <div id="expandOk" class="result success"></div>
+                <div id="expandErr" class="result error"></div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>
