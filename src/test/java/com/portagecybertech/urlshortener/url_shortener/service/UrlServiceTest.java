@@ -39,8 +39,8 @@ class UrlServiceTest {
         when(urlMappingRepository.findByOriginalUrl(eq(original)))
                 .thenReturn(Optional.of(mapping));
 
-        String first = urlService.shorten(original);
-        String second = urlService.shorten(original);
+        String first = urlService.shorten(original).shortUrl();
+        String second = urlService.shorten(original).shortUrl();
 
         assertEquals("http://localhost:8080/" + shortCode, first);
         assertEquals("http://localhost:8080/" + shortCode, second);
